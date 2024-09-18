@@ -18,7 +18,7 @@ jobs:
           scheme: semver
           increment: patch
     outputs:
-      current-version: v${{ steps.version.outputs.version }}
+      current-version: ${{ steps.version.outputs.version }}
   build:
     needs: version
     ## We want to define a strategy for our job
@@ -49,23 +49,23 @@ jobs:
 
     - name: Build Windows
       if: matrix.platform == 'windows-latest'
-      run: go build -v -o dist/brl-rate-get-${{ matrix.platform }}_${{ needs.version.outputs.current-version }}.exe .
+      run: go build -v -o dist/brl-rate-get-${{ matrix.platform }}_v${{ needs.version.outputs.current-version }}.exe .
     - name: Build
       if: matrix.platform != 'windows-latest'
-      run: go build -v -o dist/brl-rate-get-${{ matrix.platform }}_${{ needs.version.outputs.current-version }} .
+      run: go build -v -o dist/brl-rate-get-${{ matrix.platform }}_v${{ needs.version.outputs.current-version }} .
 
     - name: Upload Artifact Windows
       if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: brl-rate-get-${{ matrix.platform }}_${{ needs.version.outputs.current-version }}.exe
-        path: dist/brl-rate-get-${{ matrix.platform }}_${{ needs.version.outputs.current-version }}.exe
+        name: brl-rate-get-${{ matrix.platform }}_v${{ needs.version.outputs.current-version }}.exe
+        path: dist/brl-rate-get-${{ matrix.platform }}_v${{ needs.version.outputs.current-version }}.exe
     - name: Upload Artifact
       if: matrix.platform != 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: brl-rate-get-${{ matrix.platform }}_${{ needs.version.outputs.current-version }}
-        path: dist/brl-rate-get-${{ matrix.platform }}_${{ needs.version.outputs.current-version }}
+        name: brl-rate-get-${{ matrix.platform }}_v${{ needs.version.outputs.current-version }}
+        path: dist/brl-rate-get-${{ matrix.platform }}_v${{ needs.version.outputs.current-version }}
   release:
     runs-on: ubuntu-latest
     needs:
@@ -85,17 +85,17 @@ jobs:
       - name: Download Artifact windows-latest
         uses: actions/download-artifact@v4
         with:
-          name: brl-rate-get-windows-latest_${{ needs.version.outputs.current-version }}.exe
+          name: brl-rate-get-windows-latest_v${{ needs.version.outputs.current-version }}.exe
           path: dist
       - name: Download Artifact macos-latest
         uses: actions/download-artifact@v4
         with:
-          name: brl-rate-get-macos-latest_${{ needs.version.outputs.current-version }}
+          name: brl-rate-get-macos-latest_v${{ needs.version.outputs.current-version }}
           path: dist
       - name: Download Artifact ubuntu-latest
         uses: actions/download-artifact@v4
         with:
-          name: brl-rate-get-ubuntu-latest_${{ needs.version.outputs.current-version }}
+          name: brl-rate-get-ubuntu-latest_v${{ needs.version.outputs.current-version }}
           path: dist
       - name: Upload Assets to Release with a wildcard
         uses: csexton/release-asset-action@v2
